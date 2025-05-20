@@ -13,7 +13,7 @@ set -x
 dnf update -y
 
 # Install packages
-dnf install -y httpd php php-mysqlnd php-fpm php-json php-mbstring php-xml php-curl mariadb105-server wget unzip curl
+dnf install -y httpd php php-mysqlnd php-fpm php-json php-mbstring php-xml php-curl mariadb105-server
 
 # Start and enable services
 systemctl start httpd
@@ -24,6 +24,12 @@ systemctl enable --now mariadb
 # Wait 5 seconds for MariaDB to fully start
 sleep 5
 
+# Echo variables 
+echo "DBNAME: ${db_name}"
+echo "DBUSER: ${db_user}"
+echo "DBPASS: ${db_pass}"
+echo "MYSQL_ROOT_PASSWORD: ${mysql_root_password}"
+echo 
 
 # --- Run the secure SQL setup ---
 mysql -u root <<EOF
@@ -34,7 +40,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysql_root_password}';
 DELETE FROM mysql.user WHERE User='';
 
 -- Disallow remote root login
-UPDATE mysql.user SET Host='localhost' WHERE User='root';
+-- UPDATE mysql.user SET Host='localhost' WHERE User='root';
 
 -- Remove test database
 DROP DATABASE IF EXISTS test;

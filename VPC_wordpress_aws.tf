@@ -1,19 +1,19 @@
 provider "aws" {
-  region = "ap-southeast-2"
+  region = var.aws_region
 }
 
 # create VPC
-resource "aws_vpc" "DCE04_LB" {
+resource "aws_vpc" "wp_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
     LoadBalancersTeam = "VPC"
-    Name = "VPC - LoadBalancersTeam"
+    Name = var.vpc_name
   }
 }
 
 # Create public subnet a
 resource "aws_subnet" "Public_a" {
-  vpc_id     = aws_vpc.DCE04_LB.id
+  vpc_id     = aws_vpc.wp_vpc.id
   cidr_block = "10.0.0.0/24"
   availability_zone = "ap-southeast-2a"
   map_public_ip_on_launch = true
@@ -26,7 +26,7 @@ resource "aws_subnet" "Public_a" {
 
 # Create private subnet a
 resource "aws_subnet" "Private_a" {
-  vpc_id     = aws_vpc.DCE04_LB.id
+  vpc_id     = aws_vpc.wp_vpc.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "ap-southeast-2a"
   tags = {
@@ -37,20 +37,20 @@ resource "aws_subnet" "Private_a" {
 
 # Create public subnet b
 resource "aws_subnet" "Public_b" {
-  vpc_id     = aws_vpc.DCE04_LB.id
+  vpc_id     = aws_vpc.wp_vpc.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "ap-southeast-2b"
   map_public_ip_on_launch = true
   tags = {
     LoadBalancersTeam = "Public_SubNet_b"
-    Name = "Public_Subnet_b - LoadBalancersTeam"
+    Name = "Public_SubNet_b - LoadBalancersTeam"
 
   }
 }
 
 # Create private subnet b
 resource "aws_subnet" "Private_b" {
-  vpc_id     = aws_vpc.DCE04_LB.id
+  vpc_id     = aws_vpc.wp_vpc.id
   cidr_block = "10.0.3.0/24"
   availability_zone = "ap-southeast-2b"
   tags = {
@@ -61,7 +61,7 @@ resource "aws_subnet" "Private_b" {
 
 # Create Internet Gateway
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.DCE04_LB.id
+  vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "InternetGateway"
     Name = "IGW - LoadBalancersTeam"
@@ -70,7 +70,7 @@ resource "aws_internet_gateway" "igw" {
 
 # Route Table for Public Subnets
 resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.DCE04_LB.id
+  vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "Public_route_table"
     Name = "PublicRouteTable - LoadBalancersTeam"
@@ -121,7 +121,7 @@ resource "aws_nat_gateway" "nat_gw" {
 
 # Route Table for Private Subnets
 resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.DCE04_LB.id
+  vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "PrivateRT"
     Name = "PrivateRouteTable - LoadBalancersTeam"

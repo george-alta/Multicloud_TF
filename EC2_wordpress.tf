@@ -20,7 +20,7 @@ resource "aws_instance" "wordpress" {
 resource "aws_security_group" "wordpress_sg" {
     name        = "wordpress-sg"
     description = "Allow SSH and HTTP"
-    vpc_id      = aws_vpc.DCE04_LB.id
+    vpc_id      = aws_vpc.wp_vpc.id
 
     ingress {
         description = "Allow HTTP"

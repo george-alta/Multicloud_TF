@@ -13,7 +13,7 @@ resource "aws_db_subnet_group" "wp_db_subnet_group" {
 resource "aws_security_group" "wp_db_sg" {
   name        = "wp-db-sg"
   description = "Allow MySQL inbound traffic"
-  vpc_id      = aws_vpc.DCE04_LB.id
+  vpc_id      = aws_vpc.wp_vpc.id
 
   ingress {
     from_port   = 3306

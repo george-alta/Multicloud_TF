@@ -13,13 +13,15 @@ set -x
 dnf update -y
 
 # Install packages
-dnf install -y httpd php php-mysqlnd php-fpm php-json php-mbstring php-xml php-curl mariadb-server wget unzip curl
+dnf install -y httpd php php-mysqlnd php-fpm php-json php-mbstring php-xml php-curl mariadb105-server wget unzip curl
 
 # Start and enable services
+systemctl start httpd
 systemctl enable --now httpd
+systemctl start mariadb
 systemctl enable --now mariadb
 
-# Wait a bit for MariaDB to fully start
+# Wait 5 seconds for MariaDB to fully start
 sleep 5
 
 
@@ -57,6 +59,7 @@ cd /tmp
 wget https://wordpress.org/latest.zip
 unzip -q latest.zip
 rm -rf /var/www/html/*
+mkdir -p /var/www/html/
 cp -r wordpress/* /var/www/html/
 chown -R apache:apache /var/www/html/
 chmod -R 755 /var/www/html/

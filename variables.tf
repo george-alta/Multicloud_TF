@@ -1,12 +1,15 @@
 variable "db_name" {
-  type = string
+  description = "The name of the WordPress database"
+  type        = string
 }
 variable "db_user" {
-  type = string
+  description = "value of the database user"
+  type        = string
 }
 variable "db_pass" {
-  type      = string
-  sensitive = true
+  description = "The password for the database user"
+  type        = string
+  sensitive   = true
 }
 variable "mysql_root_password" {
   type      = string
@@ -30,6 +33,6 @@ variable "private_subnet_b_name" {
   type = string
 }
 variable "aws_region" {
-  type = string
+  type    = string
   default = "ap-southeast-2"
 }

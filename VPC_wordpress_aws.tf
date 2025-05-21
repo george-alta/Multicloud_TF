@@ -7,55 +7,55 @@ resource "aws_vpc" "wp_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
     LoadBalancersTeam = "VPC"
-    Name = var.vpc_name
+    Name              = var.vpc_name
   }
 }
 
 # Create public subnet a
 resource "aws_subnet" "Public_a" {
-  vpc_id     = aws_vpc.wp_vpc.id
-  cidr_block = "10.0.0.0/24"
-  availability_zone = "ap-southeast-2a"
+  vpc_id                  = aws_vpc.wp_vpc.id
+  cidr_block              = "10.0.0.0/24"
+  availability_zone       = "ap-southeast-2a"
   map_public_ip_on_launch = true
   tags = {
     LoadBalancersTeam = "Public_SubNet_a"
-    Name = "Public_Subnet_a - LoadBalancersTeam"
+    Name              = "Public_Subnet_a - LoadBalancersTeam"
 
   }
 }
 
 # Create private subnet a
 resource "aws_subnet" "Private_a" {
-  vpc_id     = aws_vpc.wp_vpc.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.wp_vpc.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "ap-southeast-2a"
   tags = {
     LoadBalancersTeam = "Private_SubNet_a"
-    Name = "Private_SubNet_a - LoadBalancersTeam"
+    Name              = "Private_SubNet_a - LoadBalancersTeam"
   }
 }
 
 # Create public subnet b
 resource "aws_subnet" "Public_b" {
-  vpc_id     = aws_vpc.wp_vpc.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "ap-southeast-2b"
+  vpc_id                  = aws_vpc.wp_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "ap-southeast-2b"
   map_public_ip_on_launch = true
   tags = {
     LoadBalancersTeam = "Public_SubNet_b"
-    Name = "Public_SubNet_b - LoadBalancersTeam"
+    Name              = "Public_SubNet_b - LoadBalancersTeam"
 
   }
 }
 
 # Create private subnet b
 resource "aws_subnet" "Private_b" {
-  vpc_id     = aws_vpc.wp_vpc.id
-  cidr_block = "10.0.3.0/24"
+  vpc_id            = aws_vpc.wp_vpc.id
+  cidr_block        = "10.0.3.0/24"
   availability_zone = "ap-southeast-2b"
   tags = {
     LoadBalancersTeam = "Private_SubNet_b"
-    Name = "Private_SubNet_b - LoadBalancersTeam"
+    Name              = "Private_SubNet_b - LoadBalancersTeam"
   }
 }
 
@@ -64,7 +64,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "InternetGateway"
-    Name = "IGW - LoadBalancersTeam"
+    Name              = "IGW - LoadBalancersTeam"
   }
 }
 
@@ -73,7 +73,7 @@ resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "Public_route_table"
-    Name = "PublicRouteTable - LoadBalancersTeam"
+    Name              = "PublicRouteTable - LoadBalancersTeam"
   }
 }
 
@@ -124,7 +124,7 @@ resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
     LoadBalancersTeam = "PrivateRT"
-    Name = "PrivateRouteTable - LoadBalancersTeam"
+    Name              = "PrivateRouteTable - LoadBalancersTeam"
   }
 }
 /*

@@ -32,6 +32,14 @@ variable "private_subnet_a_name" {
 variable "private_subnet_b_name" {
   type = string
 }
+variable "web_domain_name" {
+  description = "The domain name for the WordPress site"
+  type = string
+}
+variable "ssl_cert_arn" {
+  description = "The ARN of the SSL certificate"
+  type = string
+}
 variable "aws_region" {
   type    = string
   default = "ap-southeast-2"

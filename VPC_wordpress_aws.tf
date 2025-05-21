@@ -12,7 +12,7 @@ resource "aws_vpc" "wp_vpc" {
 }
 
 # Create public subnet a
-resource "aws_subnet" "Public_a" {
+resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.wp_vpc.id
   cidr_block              = "10.0.0.0/24"
   availability_zone       = "ap-southeast-2a"
@@ -25,7 +25,7 @@ resource "aws_subnet" "Public_a" {
 }
 
 # Create private subnet a
-resource "aws_subnet" "Private_a" {
+resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.wp_vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "ap-southeast-2a"
@@ -36,7 +36,7 @@ resource "aws_subnet" "Private_a" {
 }
 
 # Create public subnet b
-resource "aws_subnet" "Public_b" {
+resource "aws_subnet" "public_b" {
   vpc_id                  = aws_vpc.wp_vpc.id
   cidr_block              = "10.0.2.0/24"
   availability_zone       = "ap-southeast-2b"
@@ -49,7 +49,7 @@ resource "aws_subnet" "Public_b" {
 }
 
 # Create private subnet b
-resource "aws_subnet" "Private_b" {
+resource "aws_subnet" "private_b" {
   vpc_id            = aws_vpc.wp_vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "ap-southeast-2b"
@@ -84,15 +84,15 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-# Associate route table - Public_a subnet 
+# Associate route table - public_a subnet 
 resource "aws_route_table_association" "public_a_assoc" {
-  subnet_id      = aws_subnet.Public_a.id
+  subnet_id      = aws_subnet.public_a.id
   route_table_id = aws_route_table.public_rt.id
 }
 
-# Associate route table - Public_b subnet  
+# Associate route table - public_b subnet  
 resource "aws_route_table_association" "public_b_assoc" {
-  subnet_id      = aws_subnet.Public_b.id
+  subnet_id      = aws_subnet.public_b.id
   route_table_id = aws_route_table.public_rt.id
 }
 
@@ -109,7 +109,7 @@ resource "aws_eip" "nat_eip" {
 # NAT Gateway (must be in a public subnet)
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.Public_a.id  # NAT Gateway in a public subnet
+  subnet_id     = aws_subnet.public_a.id  # NAT Gateway in a public subnet
   tags = {
     LoadBalancersTeam = "NATGW"
     Name = "NAT Gateway - LoadBalancersTeam"
@@ -136,14 +136,14 @@ resource "aws_route" "private_internet_access" {
 }
 */
 
-# Associate Private_a subnet with private route table
+# Associate private_a subnet with private route table
 resource "aws_route_table_association" "private_a_assoc" {
-  subnet_id      = aws_subnet.Private_a.id
+  subnet_id      = aws_subnet.private_a.id
   route_table_id = aws_route_table.private_rt.id
 }
 
-# Associate Private_b subnet with private route table
+# Associate private_b subnet with private route table
 resource "aws_route_table_association" "private_b_assoc" {
-  subnet_id      = aws_subnet.Private_b.id
+  subnet_id      = aws_subnet.private_b.id
   route_table_id = aws_route_table.private_rt.id
 }

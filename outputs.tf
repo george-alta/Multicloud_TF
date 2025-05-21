@@ -8,7 +8,7 @@ output "acm_validation_info" {
   description = "The domain validation options for the ACM certificate"
 }
 
-output "load_balancer_dns_name" {
-  value       = aws_lb.web_lb.dns_name
-  description = "The DNS name of the load balancer"
-}
+# output "load_balancer_dns_name" {
+#   value       = aws_lb.web_alb.dns_name
+#   description = "The DNS name of the load balancer"
+# }

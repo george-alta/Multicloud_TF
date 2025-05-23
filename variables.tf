@@ -48,3 +48,21 @@ variable "ssl_cert_arn" {
   description = "The ARN of the SSL certificate"
   type        = string
 }
+variable "ec2_wordpress_key" {
+  description = "The name of the key pair to use for the EC2 instance"
+  type        = string
+}
+
+# disabling all azure resources for now
+# variable "azure_resource_group_name" {
+#   description = "The name of the Azure resource group"
+#   type        = string
+# }
+# variable "azure_subscription_id" {
+#   description = "The Azure subscription ID"
+#   type        = string
+# }
+# variable "azure_tenant_id" {
+#   description = "The Azure tenant ID"
+#   type        = string
+# }

@@ -4,7 +4,7 @@ resource "aws_instance" "wordpress" {
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public_a.id
   associate_public_ip_address = true
-  key_name                    = "DCE04"
+  key_name                    = var.ec2_wordpress_key
   vpc_security_group_ids      = [aws_security_group.wordpress_sg.id]
   user_data = base64encode(templatefile("${path.module}/templates/user_data.sh.tpl", {
     db_name             = var.db_name

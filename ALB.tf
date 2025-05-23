@@ -36,3 +36,13 @@ resource "aws_lb_listener" "https_listener" {
 }
 
 # make the load balancer point to the EC2 instance in EC2_wordpress.tf
+
+
+# after creating this load balancer I need to update a DNS record in azure dns zones
+# resource "azurerm_dns_cname_record" "www_alb" {
+#   name                = "www"
+#   zone_name           = var.web_domain_name
+#   resource_group_name = var.azure_resource_group_name
+#   ttl                 = 3600
+#   record              = aws_lb.web_alb.dns_name
+# }

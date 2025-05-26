@@ -31,7 +31,7 @@ this code allows to deploy an AWS VPC and an EC2 wordpress instance using Terraf
 
 - [ ] modify security groups to nested permissions
 
-- [ ] create mount for EFS 
+- [ ] create mount for EFS (optional)
 
 - [ ] create load balancer
 

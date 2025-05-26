@@ -10,7 +10,7 @@ provider "aws" {
 
 # create VPC
 resource "aws_vpc" "wp_vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr
   tags = {
     LoadBalancersTeam = "VPC"
     Name              = var.vpc_name
@@ -20,12 +20,12 @@ resource "aws_vpc" "wp_vpc" {
 # Create public subnet a
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.wp_vpc.id
-  cidr_block              = "10.0.0.0/24"
-  availability_zone       = "ap-southeast-2a"
+  cidr_block              = var.public_subnet_a_cidr
+  availability_zone       = var.aws_availability_zone_a
   map_public_ip_on_launch = true
   tags = {
     LoadBalancersTeam = "Public_SubNet_a"
-    Name              = "Public_Subnet_a - LoadBalancersTeam"
+    Name              = var.public_subnet_a_name
 
   }
 }
@@ -33,35 +33,34 @@ resource "aws_subnet" "public_a" {
 # Create private subnet a
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.wp_vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "ap-southeast-2a"
+  cidr_block        = var.private_subnet_a_cidr
+  availability_zone = var.aws_availability_zone_a
   tags = {
     LoadBalancersTeam = "Private_SubNet_a"
-    Name              = "Private_SubNet_a - LoadBalancersTeam"
+    Name              = var.private_subnet_a_name
   }
 }
 
 # Create public subnet b
 resource "aws_subnet" "public_b" {
   vpc_id                  = aws_vpc.wp_vpc.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "ap-southeast-2b"
+  cidr_block              = var.public_subnet_b_cidr
+  availability_zone       = var.aws_availability_zone_b
   map_public_ip_on_launch = true
   tags = {
     LoadBalancersTeam = "Public_SubNet_b"
-    Name              = "Public_SubNet_b - LoadBalancersTeam"
-
+    Name              = var.public_subnet_b_name
   }
 }
 
 # Create private subnet b
 resource "aws_subnet" "private_b" {
   vpc_id            = aws_vpc.wp_vpc.id
-  cidr_block        = "10.0.3.0/24"
-  availability_zone = "ap-southeast-2b"
+  cidr_block        = var.private_subnet_b_cidr
+  availability_zone = var.aws_availability_zone_b
   tags = {
     LoadBalancersTeam = "Private_SubNet_b"
-    Name              = "Private_SubNet_b - LoadBalancersTeam"
+    Name              = var.private_subnet_b_name
   }
 }
 

@@ -77,8 +77,13 @@ sed -i "s/database_name_here/${db_name}/" wp-config.php
 sed -i "s/username_here/${db_user}/" wp-config.php
 sed -i "s/password_here/${db_pass}/" wp-config.php
 
-# Add unique salts
-curl -s https://api.wordpress.org/secret-key/1.1/salt/ | tee -a wp-config.php > /dev/null
+# remove placeholder and Add unique salts
+sudo sed -i '/define(.*AUTH_KEY.*put your unique phrase here.*);/,+7d' /var/www/html/wp-config.php && curl -s https://api.wordpress.org/secret-key/1.1/salt/ | sudo tee -a /var/www/html/wp-config.php > /dev/null
+
+# force ssl admin;
+# echo "define('FORCE_SSL_ADMIN', true);" | sudo tee -a /var/www/html/wp-config.php > /dev/null
+
+# curl -s https://api.wordpress.org/secret-key/1.1/salt/ | tee -a wp-config.php > /dev/null
 
 # Optional: Install phpMyAdmin (not hardened for production)
 cd /var/www/html
@@ -87,6 +92,11 @@ unzip -q phpmyadmin.zip
 mv phpMyAdmin-*-all-languages phpmyadmin
 rm phpmyadmin.zip
 chown -R apache:apache phpmyadmin
+
+# install GD library for image processing
+sudo dnf install -y php-gd
+sudo systemctl restart php-fpm
+sudo systemctl restart httpd
 
 # Restart Apache
 systemctl restart httpd

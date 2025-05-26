@@ -18,26 +18,58 @@ variable "mysql_root_password" {
   type      = string
   sensitive = true
 }
+
 variable "vpc_name" {
   type = string
 }
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+}
+
 variable "public_subnet_a_name" {
   type = string
 }
-variable "public_subnet_b_name" {
+variable "public_subnet_a_cidr" {
   type = string
 }
 
 variable "private_subnet_a_name" {
   type = string
 }
+variable "private_subnet_a_cidr" {
+  type = string
+}
+
+variable "public_subnet_b_name" {
+  type = string
+}
+variable "public_subnet_b_cidr" {
+  type = string
+}
 
 variable "private_subnet_b_name" {
   type = string
 }
+variable "private_subnet_b_cidr" {
+  type = string
+}
+
+
 variable "aws_region" {
   type    = string
   default = "ap-southeast-2"
+}
+variable "aws_availability_zone_a" {
+  type    = string
+  default = "ap-southeast-2a"
+  
+}
+
+variable "aws_availability_zone_b" {
+  type    = string
+  default = "ap-southeast-2b"
+
 }
 
 variable "web_domain_name" {

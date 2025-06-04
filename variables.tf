@@ -85,6 +85,36 @@ variable "ec2_wordpress_key" {
   type        = string
 }
 
+variable "vpn_key_name" {
+  description = "VPN server EC2 key pair name"
+  type        = string
+}
+
+variable "admin_password" {
+  description = "VPN Admin user password"
+  type        = string
+  sensitive   = true
+}
+
+variable "user1_password" {
+  description = "VPN User1 password"
+  type        = string
+  sensitive   = true
+}
+
+variable "ami_aws_linux" {
+  description = "The AMI ID for the AWS Linux instance"
+  type        = string
+  default     = "ami-06a0b33485e9d1cf1" # current Amazon Linux 2023 AMI in ap-southeast-2
+  
+}
+
+variable "instance_type" {
+  description = "The instance type for the EC2 instance"
+  type        = string
+  default     = "t2.micro" # for free tier usage
+}
+
 # disabling all azure resources for now
 # variable "azure_resource_group_name" {
 #   description = "The name of the Azure resource group"

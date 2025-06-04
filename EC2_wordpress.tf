@@ -1,7 +1,7 @@
 resource "aws_instance" "wordpress" {
-  # best practice is to change the hardcoded ami to the latest Amazon Linux 2023 ami
-  ami                         = "ami-06a0b33485e9d1cf1"
-  instance_type               = "t2.micro"
+  # best practice is to change the hardcoded ami to search for latest Amazon Linux 2023 ami
+  ami                         = var.ami_aws_linux
+  instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public_a.id
   associate_public_ip_address = true
   key_name                    = var.ec2_wordpress_key

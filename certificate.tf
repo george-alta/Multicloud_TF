@@ -1,12 +1,13 @@
 resource "aws_acm_certificate" "ssl_cert" {
-  domain_name       = "yoobeeloadbalancers.xyz"
+  domain_name       = var.web_domain_name
   validation_method = "DNS"
 
   tags = {
     Name = "SSL-Cert"
   }
   lifecycle {
-    create_before_destroy = true
+    # prevent destroy to avoid accidental deletion of the certificate
+    prevent_destroy = true
   }
 }
 

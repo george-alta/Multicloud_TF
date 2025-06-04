@@ -11,8 +11,9 @@ resource "aws_instance" "wordpress" {
     db_user             = var.db_user
     db_pass             = var.db_pass
     mysql_root_password = var.mysql_root_password
+    efs_id              = aws_efs_file_system.wp_efs.id
   }))
-
+  depends_on = [aws_efs_mount_target.wp_efs_mount]
   tags = {
     Name = "wordpress-ec2"
   }

@@ -8,12 +8,14 @@ set -x
 # DBUSER="${db_user}"
 # DBPASS="${db_pass}"
 # MYSQL_ROOT_PASSWORD="${mysql_root_password}"
+# EFS_ID="${efs_id}"
 
 # Update system
 dnf update -y
 
 # Install packages
 dnf install -y httpd php php-mysqlnd php-fpm php-json php-mbstring php-xml php-curl mariadb105-server
+yum install -y amazon-efs-utils
 
 # Start and enable services
 systemctl start httpd
@@ -65,12 +67,18 @@ cd /tmp
 wget https://wordpress.org/latest.zip
 unzip -q latest.zip
 rm -rf /var/www/html/*
-mkdir -p /var/www/html/
+
+# mount EFS in /var/www/html/
+mkdir -p /var/www/html
+mount -t efs ${efs_id}:/ /var/www/html
+echo "${efs_id}:/ /var/www/html efs defaults,_netdev 0 0" >> /etc/fstab
+
+# Copy WordPress files to the web root
 cp -r wordpress/* /var/www/html/
 chown -R apache:apache /var/www/html/
 chmod -R 755 /var/www/html/
 
-# Configure WordPress
+# Configure WordPress #TODO use WP CLI
 cd /var/www/html
 cp wp-config-sample.php wp-config.php
 sed -i "s/database_name_here/${db_name}/" wp-config.php

@@ -33,42 +33,14 @@ echo "DBNAME: ${db_name}"
 echo "DBUSER: ${db_user}"
 echo "DBPASS: ${db_pass}"
 echo "MYSQL_ROOT_PASSWORD: ${mysql_root_password}"
-echo 
-
-# --- Run the secure SQL setup ---
-mysql -u root <<EOF
--- Set root password 
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysql_root_password}';
-
--- Remove anonymous users
-DELETE FROM mysql.user WHERE User='';
-
--- Disallow remote root login
--- UPDATE mysql.user SET Host='localhost' WHERE User='root';
-
--- Remove test database
-DROP DATABASE IF EXISTS test;
-
--- Remove privileges on test DBs
-DELETE FROM mysql.db WHERE Db LIKE 'test%';
-
--- Apply all changes
-FLUSH PRIVILEGES;
 
 
--- Create WordPress DB and user
-
-CREATE DATABASE IF NOT EXISTS ${db_name};
-CREATE USER IF NOT EXISTS '${db_user}'@'localhost' IDENTIFIED BY '${db_pass}';
-GRANT ALL PRIVILEGES ON ${db_name}.* TO '${db_user}'@'localhost';
-FLUSH PRIVILEGES;
-EOF
 
 # Download and extract WordPress
 cd /tmp
 wget https://wordpress.org/latest.zip
 unzip -q latest.zip
-rm -rf /var/www/html/*
+rm -rf "/var/www/html/"*
 
 # mount EFS in /var/www/html/
 mkdir -p /var/www/html
@@ -76,23 +48,46 @@ mount -t efs ${efs_id}:/ /var/www/html
 echo "${efs_id}:/ /var/www/html efs defaults,_netdev 0 0" >> /etc/fstab
 
 # Copy WordPress files to the web root
-cp -r wordpress/* /var/www/html/
+cp -r "wordpress/"* /var/www/html/
 chown -R apache:apache /var/www/html/
 chmod -R 755 /var/www/html/
 
-# Configure WordPress #TODO use WP CLI
-cd /var/www/html
-cp wp-config-sample.php wp-config.php
-sed -i "s/database_name_here/${db_name}/" wp-config.php
-sed -i "s/username_here/${db_user}/" wp-config.php
-sed -i "s/password_here/${db_pass}/" wp-config.php
-sed -i "s/localhost/${db_host}/" wp-config.php
+# Install WP CLI
+sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+sudo chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
+wp --info
 
-# remove placeholder and Add unique salts
-sudo sed -i '/define(.*AUTH_KEY.*put your unique phrase here.*);/,+7d' /var/www/html/wp-config.php && curl -s https://api.wordpress.org/secret-key/1.1/salt/ | sudo tee -a /var/www/html/wp-config.php > /dev/null
+# 1. Create wp-config.php
+wp config create \
+  --dbname="${db_name}" \
+  --dbuser="${db_user}" \
+  --dbpass="${db_pass}" \
+  --dbhost="${db_host}" \
+  --path=/var/www/html \
+  --allow-root
 
-# force ssl admin;
-# echo "define('FORCE_SSL_ADMIN', true);" | sudo tee -a /var/www/html/wp-config.php > /dev/null
+
+# 2. Add salts, debug, SSL, and site URL
+wp config shuffle-salts --path=/var/www/html --allow-root
+
+wp config set WP_DEBUG true --raw --path=/var/www/html --allow-root
+wp config set WP_DEBUG_LOG true --raw --path=/var/www/html --allow-root
+wp config set WP_DEBUG_DISPLAY true --raw --path=/var/www/html --allow-root
+wp config set FORCE_SSL_ADMIN true --raw --path=/var/www/html --allow-root
+wp config set WP_HOME 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
+wp config set WP_SITEURL 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
+
+# 3. Finally, install WordPress
+wp core install \
+  --url='${wp_url}' \
+  --title='${wp_title}' \
+  --admin_user='${wp_admin_user}' \
+  --admin_password='${wp_admin_password}' \
+  --admin_email='${wp_admin_email}' \
+  --path=/var/www/html \
+  --allow-root
+
 
 # curl -s https://api.wordpress.org/secret-key/1.1/salt/ | tee -a wp-config.php > /dev/null
 

@@ -8,17 +8,22 @@ resource "aws_instance" "wordpress" {
   vpc_security_group_ids      = [aws_security_group.wordpress_sg.id]
   user_data = base64encode(templatefile("${path.module}/templates/user_data.sh.tpl", {
     db_host             = aws_db_instance.wp_db_maria.address
-    db_name             = var.db_name
-    db_user             = var.db_user
-    db_pass             = var.db_pass
-    mysql_root_password = var.mysql_root_password
+    db_name             = var.rds_db_name
+    db_user             = var.rds_username
+    db_pass             = var.rds_password
     efs_id              = aws_efs_file_system.wp_efs.id
+    wp_url              = var.wp_url
+    wp_title            = var.wp_title
+    wp_admin_user       = var.wp_admin_user
+    wp_admin_password   = var.wp_admin_password
+    wp_admin_email      = var.wp_admin_email
+    mysql_root_password = var.mysql_root_password
   }))
   depends_on = [aws_efs_mount_target.wp_efs_mount, aws_db_instance.wp_db_maria]
   tags = {
-    Owner = var.owner_name
+    Owner       = var.owner_name
     Environment = "WordPress-DEV"
-    Name = "wordpress-ec2"
+    Name        = "wordpress-ec2"
   }
 }
 
@@ -58,7 +63,7 @@ resource "aws_security_group" "wordpress_sg" {
   }
 
   tags = {
-    Name = "wordpress-sg"
+    Name  = "wordpress-sg"
     Owner = var.owner_name
 
   }

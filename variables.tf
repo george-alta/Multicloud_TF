@@ -18,7 +18,7 @@ variable "aws_region" {
 variable "aws_availability_zone_a" {
   type    = string
   default = "ap-southeast-2a"
-  
+
 }
 
 variable "aws_availability_zone_b" {
@@ -71,7 +71,7 @@ variable "ami_aws_linux" {
   description = "The AMI ID for the AWS Linux instance"
   type        = string
   default     = "ami-06a0b33485e9d1cf1" # current Amazon Linux 2023 AMI in ap-southeast-2
-  
+
 }
 
 variable "instance_type" {
@@ -103,6 +103,29 @@ variable "db_pass" {
 variable "mysql_root_password" {
   type      = string
   sensitive = true
+}
+
+#5.1 Wordpress Configuration
+variable "wp_admin_email" {
+  description = "The email address for the WordPress admin user"
+  type        = string
+}
+variable "wp_admin_password" {
+  description = "The password for the WordPress admin user"
+  type        = string
+}
+variable "wp_admin_user" {
+  description = "The username for the WordPress admin user"
+  type        = string
+}
+variable "wp_url" {
+  description = "The URL of the WordPress site"
+  type        = string
+}
+variable "wp_title" {
+  description = "The title of the WordPress site"
+  type        = string
+  default     = "WordPress on AWS with Terraform"
 }
 
 #6 RDS configuration

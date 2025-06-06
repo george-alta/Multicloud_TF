@@ -1,68 +1,81 @@
+# 🌐 Application Load Balancer for WordPress
 
-## 📘 Application Load Balancer Configuration (Terraform)
-
-This Terraform configuration provisions an **Application Load Balancer (ALB)** in AWS to distribute incoming HTTPS traffic to a backend EC2 instance running WordPress. It includes components for the load balancer itself, a target group, a listener on port 443 (HTTPS), and target group attachment to an EC2 instance.
-
----
-
-### 🔧 Resources Overview
+This Terraform configuration provisions an **AWS Application Load Balancer (ALB)** to distribute traffic to a WordPress EC2 instance, with HTTPS support using an ACM SSL certificate. It includes a target group, listener configuration, and optional DNS integration with **Azure DNS**.
 
 ---
 
-### `aws_lb.web_alb`
+## 📦 Resources Overview
 
-**Purpose**: Creates the public-facing Application Load Balancer.
+### 1. `aws_lb.web_alb`
 
-**Key Attributes**:
+Creates an **Internet-facing Application Load Balancer** across two public subnets.
 
-* `internal = false`: This is an internet-facing ALB.
-* `load_balancer_type = "application"`: Specifies an ALB (vs. NLB).
-* `subnets`: Spread across two public subnets for high availability.
-* `security_groups`: Attached to a security group allowing HTTP/HTTPS.
+| Attribute         | Value                                      |
+|-------------------|--------------------------------------------|
+| `name`            | `web-alb`                                  |
+| `internal`        | `false` (public-facing)                    |
+| `type`            | `application`                              |
+| `subnets`         | `public_a`, `public_b`                     |
+| `security_groups` | `wordpress_sg`                             |
+| `tags`            | `Name`, `Owner`                            |
 
----
-
-### `aws_lb_target_group.web_tg`
-
-**Purpose**: Defines the backend target group where traffic is forwarded.
-
-**Key Attributes**:
-
-* `port = 80`: ALB forwards traffic to port 80 of the instance.
-* `protocol = "HTTP"`: Communication between ALB and EC2 is unencrypted HTTP.
-* `vpc_id`: Must be in the same VPC as the EC2 instance.
+> ✅ Required for scaling and distributing secure traffic to WordPress instances.
 
 ---
 
-### `aws_lb_target_group_attachment.web_attach`
+### 2. `aws_lb_target_group.web_tg`
 
-**Purpose**: Attaches the EC2 instance to the target group.
+Defines the **target group** that receives traffic from the ALB.
 
-**Key Attributes**:
-
-* `target_group_arn`: Reference to the previously created target group.
-* `target_id`: EC2 instance ID.
-* `port = 80`: Instance listens on port 80.
-
----
-
-### `aws_lb_listener.https_listener`
-
-**Purpose**: Creates an HTTPS listener on port 443 for the ALB.
-
-**Key Attributes**:
-
-* `protocol = "HTTPS"`: Incoming traffic is over HTTPS.
-* `port = 443`: Default HTTPS port.
-* `ssl_policy`: Specifies TLS configuration.
-* `certificate_arn`: Provide an existing ACM certificate or reference a newly created one.
-* `default_action`: Forwards incoming requests to the target group (`web_tg`).
-
-**Usage Notes**:
-
-* **Initial Setup**: Use `aws_acm_certificate.ssl_cert.arn` if you're provisioning a new certificate in Terraform.
-* **Subsequent Runs**: Use `var.ssl_cert_arn` to refer to an existing ACM certificate to avoid resource replacement.
+| Attribute     | Value                    |
+|---------------|--------------------------|
+| `name`        | `web-tg`                 |
+| `port`        | `80`                     |
+| `protocol`    | `HTTP`                   |
+| `vpc_id`      | From `aws_vpc.wp_vpc.id` |
 
 ---
 
+### 3. `aws_lb_target_group_attachment.web_attach`
 
+Attaches the **WordPress EC2 instance** to the target group.
+
+| Attribute         | Value                     |
+|-------------------|---------------------------|
+| `target_id`       | `aws_instance.wordpress.id` |
+| `port`            | `80`                      |
+| `target_group_arn`| From `web_tg`             |
+
+---
+
+### 4. `aws_lb_listener.https_listener`
+
+Creates a **listener for HTTPS (port 443)** with SSL termination using ACM.
+
+| Attribute         | Value                             |
+|-------------------|-----------------------------------|
+| `port`            | `443`                             |
+| `protocol`        | `HTTPS`                           |
+| `ssl_policy`      | `ELBSecurityPolicy-2016-08`       |
+| `certificate_arn` | `var.ssl_cert_arn` (external or ACM) |
+| `default_action`  | Forward to target group (`web_tg`) |
+
+> 🔐 Use `aws_acm_certificate.ssl_cert.arn` during initial certificate creation, then switch to `var.ssl_cert_arn` in subsequent runs.
+
+---
+
+### 5. 🔄 Optional: HTTP → HTTPS Redirect (Commented Out)
+
+A **listener on port 80** that redirects HTTP traffic to HTTPS.
+
+```hcl
+resource "aws_lb_listener" "http_listener" {
+  port     = 80
+  protocol = "HTTP"
+  ...
+  redirect {
+    protocol   = "HTTPS"
+    port       = "443"
+    status_code = "HTTP_301"
+  }
+}

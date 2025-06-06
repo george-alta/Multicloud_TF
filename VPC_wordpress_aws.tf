@@ -12,8 +12,8 @@ provider "aws" {
 resource "aws_vpc" "wp_vpc" {
   cidr_block = var.vpc_cidr
   tags = {
-    LoadBalancersTeam = "VPC"
-    Name              = var.vpc_name
+    Owner = var.owner_name
+    Name  = var.vpc_name
   }
 }
 
@@ -48,7 +48,7 @@ resource "aws_subnet" "public_b" {
   availability_zone       = var.aws_availability_zone_b
   map_public_ip_on_launch = true
   tags = {
-    LoadBalancersTeam = "Public_SubNet_b"
+    Owner = var.owner_name
     Name              = var.public_subnet_b_name
   }
 }
@@ -59,7 +59,7 @@ resource "aws_subnet" "private_b" {
   cidr_block        = var.private_subnet_b_cidr
   availability_zone = var.aws_availability_zone_b
   tags = {
-    LoadBalancersTeam = "Private_SubNet_b"
+    Owner = var.owner_name
     Name              = var.private_subnet_b_name
   }
 }
@@ -68,8 +68,8 @@ resource "aws_subnet" "private_b" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
-    LoadBalancersTeam = "InternetGateway"
-    Name              = "IGW - LoadBalancersTeam"
+    Owner = var.owner_name
+    Name  = "IGW"
   }
 }
 
@@ -77,8 +77,8 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
-    LoadBalancersTeam = "Public_route_table"
-    Name              = "PublicRouteTable - LoadBalancersTeam"
+    Owner = var.owner_name
+    Name  = "PublicRouteTable"
   }
 }
 
@@ -128,8 +128,8 @@ resource "aws_nat_gateway" "nat_gw" {
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.wp_vpc.id
   tags = {
-    LoadBalancersTeam = "PrivateRT"
-    Name              = "PrivateRouteTable - LoadBalancersTeam"
+    Owner = var.owner_name
+    Name  = "PrivateRouteTable"
   }
 }
 /*

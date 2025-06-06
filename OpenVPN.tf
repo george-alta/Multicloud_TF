@@ -28,7 +28,7 @@ resource "aws_security_group" "openvpn_sg" {
 }
 
 data "template_file" "user_data" {
-  template = file("${path.module}/user_data_vpn.tpl")
+  template = file("${path.module}/templates/user_data_vpn.tpl")
 
   vars = {
     admin_password = var.admin_password

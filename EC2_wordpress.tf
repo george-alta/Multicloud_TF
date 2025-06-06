@@ -15,6 +15,8 @@ resource "aws_instance" "wordpress" {
   }))
   depends_on = [aws_efs_mount_target.wp_efs_mount]
   tags = {
+    Owner = var.owner_name
+    Environment = "WordPress-DEV"
     Name = "wordpress-ec2"
   }
 }
@@ -56,5 +58,7 @@ resource "aws_security_group" "wordpress_sg" {
 
   tags = {
     Name = "wordpress-sg"
+    Owner = var.owner_name
+
   }
 }

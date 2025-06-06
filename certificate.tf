@@ -1,4 +1,6 @@
+#the certificate will be created only if ssl_cert_creation is true
 resource "aws_acm_certificate" "ssl_cert" {
+  count             = var.ssl_cert_creation ? 1 : 0
   domain_name       = var.web_domain_name
   validation_method = "DNS"
 

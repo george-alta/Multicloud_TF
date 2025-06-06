@@ -4,6 +4,10 @@ resource "aws_lb" "web_alb" {
   load_balancer_type = "application"
   subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
   security_groups    = [aws_security_group.wordpress_sg.id]
+  tags = {
+    Name = "WordPress-ALB"
+    Owner = var.owner_name
+  }
 }
 
 resource "aws_lb_target_group" "web_tg" {

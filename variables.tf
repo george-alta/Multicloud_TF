@@ -1,23 +1,33 @@
 # all these variables values need to be present in the terraform.tfvars file
 # or can be passed as command line arguments
 
-variable "db_name" {
-  description = "The name of the WordPress database"
+#1 Owner of the resources
+
+variable "owner_name" {
+  description = "The owner of the resources"
   type        = string
+  default     = "George"
 }
-variable "db_user" {
-  description = "value of the database user"
-  type        = string
+
+#2 AWS region and availability zones
+
+variable "aws_region" {
+  type    = string
+  default = "ap-southeast-2"
 }
-variable "db_pass" {
-  description = "The password for the database user"
-  type        = string
-  sensitive   = true
+variable "aws_availability_zone_a" {
+  type    = string
+  default = "ap-southeast-2a"
+  
 }
-variable "mysql_root_password" {
-  type      = string
-  sensitive = true
+
+variable "aws_availability_zone_b" {
+  type    = string
+  default = "ap-southeast-2b"
+
 }
+
+#3 VPC and subnet info
 
 variable "vpc_name" {
   type = string
@@ -55,36 +65,79 @@ variable "private_subnet_b_cidr" {
   type = string
 }
 
+#4 EC2 dev info
 
-variable "aws_region" {
-  type    = string
-  default = "ap-southeast-2"
-}
-variable "aws_availability_zone_a" {
-  type    = string
-  default = "ap-southeast-2a"
+variable "ami_aws_linux" {
+  description = "The AMI ID for the AWS Linux instance"
+  type        = string
+  default     = "ami-06a0b33485e9d1cf1" # current Amazon Linux 2023 AMI in ap-southeast-2
   
 }
 
-variable "aws_availability_zone_b" {
-  type    = string
-  default = "ap-southeast-2b"
-
-}
-
-variable "web_domain_name" {
-  description = "The domain name for the WordPress site"
+variable "instance_type" {
+  description = "The instance type for the EC2 instance"
   type        = string
+  default     = "t2.micro" # for free tier usage
 }
-variable "ssl_cert_arn" {
-  description = "The ARN of the SSL certificate"
-  type        = string
-}
+
 variable "ec2_wordpress_key" {
   description = "The name of the key pair to use for the EC2 instance"
   type        = string
 }
 
+#5 EC2 local database configuration 
+
+variable "db_name" {
+  description = "The name of the WordPress database"
+  type        = string
+}
+variable "db_user" {
+  description = "value of the database user"
+  type        = string
+}
+variable "db_pass" {
+  description = "The password for the database user"
+  type        = string
+  sensitive   = true
+}
+variable "mysql_root_password" {
+  type      = string
+  sensitive = true
+}
+
+#6 RDS configuration
+variable "rds_db_name" {
+  description = "The name of the RDS database"
+  type        = string
+}
+variable "rds_username" {
+  description = "The username for the RDS database"
+  type        = string
+}
+variable "rds_password" {
+  description = "The password for the RDS database"
+  type        = string
+  sensitive   = true
+}
+
+#7 Load Balancer info
+variable "web_domain_name" {
+  description = "The domain name for the WordPress site"
+  type        = string
+}
+
+#8 SSL Certificate
+variable "ssl_cert_creation" {
+  description = "Flag to indicate if the SSL certificate should be created"
+  type        = bool
+  default     = false # Set to true to create a new certificate
+}
+variable "ssl_cert_arn" {
+  description = "The ARN of the SSL certificate"
+  type        = string
+}
+
+#9 VPN configuration
 variable "vpn_key_name" {
   description = "VPN server EC2 key pair name"
   type        = string
@@ -102,18 +155,9 @@ variable "user1_password" {
   sensitive   = true
 }
 
-variable "ami_aws_linux" {
-  description = "The AMI ID for the AWS Linux instance"
-  type        = string
-  default     = "ami-06a0b33485e9d1cf1" # current Amazon Linux 2023 AMI in ap-southeast-2
-  
-}
 
-variable "instance_type" {
-  description = "The instance type for the EC2 instance"
-  type        = string
-  default     = "t2.micro" # for free tier usage
-}
+
+
 
 # disabling all azure resources for now
 # variable "azure_resource_group_name" {

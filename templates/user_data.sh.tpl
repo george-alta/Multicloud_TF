@@ -77,6 +77,8 @@ wp config set WP_DEBUG_DISPLAY true --raw --path=/var/www/html --allow-root
 wp config set FORCE_SSL_ADMIN true --raw --path=/var/www/html --allow-root
 wp config set WP_HOME 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
 wp config set WP_SITEURL 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
+wp config set FORCE_HTTPS_BLOCK "if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {\n    \$_SERVER['HTTPS'] = 'on';\n}" --raw --anchor="/* That's all, stop editing! Happy publishing. */" --before
+
 
 # 3. Finally, install WordPress
 wp core install \
@@ -88,8 +90,10 @@ wp core install \
   --path=/var/www/html \
   --allow-root
 
-
-# curl -s https://api.wordpress.org/secret-key/1.1/salt/ | tee -a wp-config.php > /dev/null
+# 4. create multiple random posts using WP CLI
+for i in {1..5}; do
+  wp post create --post_type=post --post_title="Random Post $i" --post_content="This is the content of random post $i." --path=/var/www/html --allow-root
+done
 
 # Optional: Install phpMyAdmin (not hardened for production)
 cd /var/www/html
@@ -98,6 +102,24 @@ unzip -q phpmyadmin.zip
 mv phpMyAdmin-*-all-languages phpmyadmin
 rm phpmyadmin.zip
 chown -R apache:apache phpmyadmin
+
+# Create config file if not exists
+CONFIG_FILE="/var/www/html/phpmyadmin/config.inc.php"
+if [ ! -f "$CONFIG_FILE" ]; then
+  cp /var/www/html/phpmyadmin/config.sample.inc.php "$CONFIG_FILE"
+fi
+
+# Generate blowfish secret
+BLOWFISH=$(openssl rand -base64 32)
+
+# Inject DB host and blowfish secret into config
+sed -i "s|\(\$cfg\['blowfish_secret'\]\s*=\s*\).*|\1'$BLOWFISH';|" "$CONFIG_FILE"
+sed -i "/\$cfg\['Servers'\]\[1\]\['host'\]/c\$cfg['Servers'][1]['host'] = '$db_host';" "$CONFIG_FILE"
+
+# If host line doesn't exist, append it
+grep -q "\['host'\]" "$CONFIG_FILE" || echo "\$cfg['Servers'][1]['host'] = '$db_host';" >> "$CONFIG_FILE"
+
+echo "✅ phpMyAdmin installed and configured with DB host: $db_host"
 
 # install GD library for image processing
 sudo dnf install -y php-gd

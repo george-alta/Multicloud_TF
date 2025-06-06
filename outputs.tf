@@ -11,4 +11,10 @@ output "wordpress_ip" {
 output "load_balancer_dns_name" {
   value       = aws_lb.web_alb.dns_name
   description = "The DNS name of the load balancer"
+
+}
+
+output "rds_endpoint" {
+  value       = aws_db_instance.wp_db_maria.address
+  description = "The endpoint of the RDS instance"
 }

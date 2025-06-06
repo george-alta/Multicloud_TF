@@ -5,6 +5,7 @@ resource "aws_instance" "wordpress" {
   subnet_id                   = aws_subnet.public_a.id
   associate_public_ip_address = true
   key_name                    = var.ec2_wordpress_key
+  iam_instance_profile        = aws_iam_instance_profile.wordpress_profile.name
   vpc_security_group_ids      = [aws_security_group.wordpress_sg.id]
   user_data = base64encode(templatefile("${path.module}/templates/user_data.sh.tpl", {
     db_host             = aws_db_instance.wp_db_maria.address

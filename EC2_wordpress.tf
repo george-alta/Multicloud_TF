@@ -23,7 +23,7 @@ resource "aws_instance" "wordpress" {
   tags = {
     Owner       = var.owner_name
     Environment = "WordPress-DEV"
-    Name        = "wordpress-ec2"
+    Name        = "wordpress-ec2-dev"
   }
 }
 

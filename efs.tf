@@ -4,7 +4,8 @@ resource "aws_efs_file_system" "wp_efs" {
   performance_mode = "generalPurpose"
 
   tags = {
-    Name = "WordPress-EFS"
+    Name  = "WordPress-EFS"
+    Owner = var.owner_name
   }
 }
 
@@ -31,5 +32,9 @@ resource "aws_security_group" "wp_efs_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [var.vpc_cidr]
+  }
+  tags = {
+    Name  = "WordPress-EFS-SG"
+    Owner = var.owner_name
   }
 }

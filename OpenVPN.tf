@@ -25,6 +25,10 @@ resource "aws_security_group" "openvpn_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  tags = {
+    Name  = "OpenVPN-SG"
+    Owner = var.owner_name
+  }
 }
 
 data "template_file" "user_data" {
@@ -46,6 +50,7 @@ resource "aws_instance" "openvpn" {
   user_data                   = data.template_file.user_data.rendered
 
   tags = {
-    Name = "OpenVPN-Server"
+    Name  = "OpenVPN-Server"
+    Owner = var.owner_name
   }
 }

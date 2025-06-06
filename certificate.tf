@@ -5,7 +5,8 @@ resource "aws_acm_certificate" "ssl_cert" {
   validation_method = "DNS"
 
   tags = {
-    Name = "SSL-Cert"
+    Name  = "SSL-Cert"
+    Owner = var.owner_name
   }
   # lifecycle {
   #   # prevent destroy to avoid accidental deletion of the certificate

@@ -4,7 +4,8 @@ exec > >(tee -a /var/log/init.log) 2>&1
 set -x
 
 # Variables
-#  DBNAME="${db_name}"
+# DBHOST="${db_host}"
+# DBNAME="${db_name}"
 # DBUSER="${db_user}"
 # DBPASS="${db_pass}"
 # MYSQL_ROOT_PASSWORD="${mysql_root_password}"
@@ -26,7 +27,8 @@ systemctl enable --now mariadb
 # Wait 5 seconds for MariaDB to fully start
 sleep 5
 
-# Echo variables 
+# Echo variables
+echo "DBHOST: ${db_host}"
 echo "DBNAME: ${db_name}"
 echo "DBUSER: ${db_user}"
 echo "DBPASS: ${db_pass}"
@@ -84,6 +86,7 @@ cp wp-config-sample.php wp-config.php
 sed -i "s/database_name_here/${db_name}/" wp-config.php
 sed -i "s/username_here/${db_user}/" wp-config.php
 sed -i "s/password_here/${db_pass}/" wp-config.php
+sed -i "s/localhost/${db_host}/" wp-config.php
 
 # remove placeholder and Add unique salts
 sudo sed -i '/define(.*AUTH_KEY.*put your unique phrase here.*);/,+7d' /var/www/html/wp-config.php && curl -s https://api.wordpress.org/secret-key/1.1/salt/ | sudo tee -a /var/www/html/wp-config.php > /dev/null

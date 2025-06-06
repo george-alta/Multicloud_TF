@@ -7,10 +7,10 @@ resource "aws_acm_certificate" "ssl_cert" {
   tags = {
     Name = "SSL-Cert"
   }
-  lifecycle {
-    # prevent destroy to avoid accidental deletion of the certificate
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   # prevent destroy to avoid accidental deletion of the certificate
+  #   prevent_destroy = true
+  # }
 }
 
 # create record in Azure DNS

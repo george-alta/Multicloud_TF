@@ -1,4 +1,4 @@
-# create an efs put a mount target in the private subnet
+# create an efs put a mount target in the private subnets
 resource "aws_efs_file_system" "wp_efs" {
   creation_token = "wp-efs-${var.vpc_name}"
   performance_mode = "generalPurpose"
@@ -9,12 +9,21 @@ resource "aws_efs_file_system" "wp_efs" {
   }
 }
 
-resource "aws_efs_mount_target" "wp_efs_mount" {
+# Create EFS mount targets in private subnets
+resource "aws_efs_mount_target" "wp_efs_mount_a" {
   file_system_id = aws_efs_file_system.wp_efs.id
   subnet_id      = aws_subnet.private_a.id
 
   security_groups = [aws_security_group.wp_efs_sg.id]
 }
+resource "aws_efs_mount_target" "wp_efs_mount_b" {
+  file_system_id = aws_efs_file_system.wp_efs.id
+  subnet_id      = aws_subnet.private_b.id
+
+  security_groups = [aws_security_group.wp_efs_sg.id]
+}
+
+# EFS Security Group for EFS WordPress
 resource "aws_security_group" "wp_efs_sg" {
   name        = "wp-efs-sg"
   description = "Allow NFS traffic to EFS"

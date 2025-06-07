@@ -42,7 +42,7 @@ wget https://wordpress.org/latest.zip
 unzip -q latest.zip
 rm -rf "/var/www/html/"*
 
-# mount EFS in /var/www/html/
+# mount EFS in /var/www/html/ and ensure it persists across reboots
 mkdir -p /var/www/html
 mount -t efs ${efs_id}:/ /var/www/html
 echo "${efs_id}:/ /var/www/html efs defaults,_netdev 0 0" >> /etc/fstab

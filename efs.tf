@@ -25,7 +25,7 @@ resource "aws_efs_mount_target" "wp_efs_mount_b" {
 
 # EFS Security Group for EFS WordPress
 resource "aws_security_group" "wp_efs_sg" {
-  name        = "wp-efs-sg"
+  name        = "EFS-SG"
   description = "Allow NFS traffic to EFS"
   vpc_id      = aws_vpc.wp_vpc.id
 
@@ -33,7 +33,8 @@ resource "aws_security_group" "wp_efs_sg" {
     from_port       = 2049
     to_port         = 2049
     protocol        = "tcp"
-    security_groups = [aws_security_group.wordpress_sg.id]
+    security_groups = [aws_security_group.ec2_dev_sg.id, aws_security_group.wordpress_prod_sg.id]
+    description     = "Allow NFS traffic from EC2 instances"
   }
 
   egress {
@@ -43,7 +44,7 @@ resource "aws_security_group" "wp_efs_sg" {
     cidr_blocks = [var.vpc_cidr]
   }
   tags = {
-    Name  = "WordPress-EFS-SG"
+    Name  = "EFS-SG"
     Owner = var.owner_name
   }
 }

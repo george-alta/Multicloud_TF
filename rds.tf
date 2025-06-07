@@ -12,8 +12,8 @@ resource "aws_db_subnet_group" "wp_db_subnet_group" {
 }
 
 resource "aws_security_group" "wp_db_sg" {
-  name        = "wp-db-sg"
-  description = "Allow MySQL inbound traffic"
+  name        = "RDS-SG"
+  description = "Allow SQL inbound traffic"
   vpc_id      = aws_vpc.wp_vpc.id
 
   ingress {
@@ -31,7 +31,7 @@ resource "aws_security_group" "wp_db_sg" {
   }
 
   tags = {
-    Name = "wp-db-sg"
+    Name = "RDS-SG"
     Owner = var.owner_name
   }
 }

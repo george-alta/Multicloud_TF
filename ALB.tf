@@ -3,7 +3,7 @@ resource "aws_lb" "web_alb" {
   internal           = false
   load_balancer_type = "application"
   subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
-  security_groups    = [aws_security_group.wordpress_sg.id]
+  security_groups    = [aws_security_group.alb_sg.id]
   tags = {
     Name = "WordPress-ALB"
     Owner = var.owner_name
@@ -69,3 +69,33 @@ resource "aws_lb_listener" "https_listener" {
 #   ttl                 = 3600
 #   record              = aws_lb.web_alb.dns_name
 # }
+#create security group for the ALB
+resource "aws_security_group" "alb_sg" {
+  name        = "ALB-SG"
+  description = "Allow HTTP/S traffic to ALB"
+  vpc_id      = aws_vpc.wp_vpc.id
+
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "Allow HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name  = "ALB-SG"
+    Owner = var.owner_name
+  } 

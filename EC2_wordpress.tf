@@ -6,7 +6,7 @@ resource "aws_instance" "wordpress" {
   associate_public_ip_address = true
   key_name                    = var.ec2_wordpress_key
   iam_instance_profile        = aws_iam_instance_profile.wordpress_profile.name
-  vpc_security_group_ids      = [aws_security_group.wordpress_sg.id]
+  vpc_security_group_ids      = [aws_security_group.ec2_dev_sg.id]
   user_data = base64encode(templatefile("${path.module}/templates/user_data.sh.tpl", {
     db_host             = aws_db_instance.wp_db_maria.address
     db_name             = var.rds_db_name
@@ -28,9 +28,9 @@ resource "aws_instance" "wordpress" {
   }
 }
 
-resource "aws_security_group" "wordpress_sg" {
-  name        = "wordpress-sg"
-  description = "Allow SSH and HTTP/S traffic"
+resource "aws_security_group" "ec2_dev_sg" {
+  name        = "EC2-DEV-SG"
+  description = "DEV SG Allow SSH and HTTP/S traffic"
   vpc_id      = aws_vpc.wp_vpc.id
 
   ingress {
@@ -64,8 +64,29 @@ resource "aws_security_group" "wordpress_sg" {
   }
 
   tags = {
-    Name  = "wordpress-sg"
+    Name  = "EC2-DEV-SG"
     Owner = var.owner_name
 
   }
 }
+
+# security group for the wordpress ec2 prod instance, allows inbound from ALB security group
+resource "aws_security_group" "wordpress_prod_sg" {
+  name        = "EC2-PROD-SG"
+  description = "PROD SG Allow HTTP/S traffic from ALB"
+  vpc_id      = aws_vpc.wp_vpc.id
+
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+  ingress {
+    description = "Allow HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }

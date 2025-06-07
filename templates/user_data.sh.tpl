@@ -77,7 +77,8 @@ wp config set WP_DEBUG_DISPLAY true --raw --path=/var/www/html --allow-root
 wp config set FORCE_SSL_ADMIN true --raw --path=/var/www/html --allow-root
 wp config set WP_HOME 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
 wp config set WP_SITEURL 'https://www.terraformistas.cloud' --path=/var/www/html --allow-root
-wp config set FORCE_HTTPS_BLOCK "if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {\n    \$_SERVER['HTTPS'] = 'on';\n}" --raw --anchor="/* That's all, stop editing! Happy publishing. */" --before
+sed -i "/\/\* That's all, stop editing! Happy publishing. \*\//i \
+if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) \&\& \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {\n  \$_SERVER['HTTPS'] = 'on';\n}" wp-config.php
 
 
 # 3. Finally, install WordPress
@@ -125,6 +126,13 @@ echo "✅ phpMyAdmin installed and configured with DB host: $db_host"
 sudo dnf install -y php-gd
 sudo systemctl restart php-fpm
 sudo systemctl restart httpd
+
+# Create a file for the health check. Healthcheck.php will return a 200 OK response.
+cat <<EOF > /var/www/html/healthcheck.php
+<?php
+http_response_code(200);
+echo "OK";
+EOF
 
 # Restart Apache
 systemctl restart httpd

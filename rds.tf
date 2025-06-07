@@ -40,7 +40,7 @@ resource "aws_db_instance" "wp_db_maria" {
   identifier         = "wp-db-maria"
   engine             = "mariadb"
   engine_version     = "11.4.5"
-  instance_class     = "db.t4g.micro"
+  instance_class     = "db.t3.micro"
   allocated_storage  = 20
   storage_type       = "gp2"
   db_name            = var.rds_db_name 

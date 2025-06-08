@@ -20,7 +20,8 @@ resource "aws_instance" "wordpress" {
     wp_admin_email      = var.wp_admin_email
     mysql_root_password = var.mysql_root_password
   }))
-  depends_on = [aws_efs_mount_target.wp_efs_mount, aws_db_instance.wp_db_maria]
+  # create after the EFS mount targets and RDS instance have been created
+  depends_on = [aws_efs_mount_target.wp_efs_mount_a, aws_efs_mount_target.wp_efs_mount_b, aws_db_instance.wp_db_maria]
   tags = {
     Owner       = var.owner_name
     Environment = "WordPress-DEV"
@@ -90,3 +91,14 @@ resource "aws_security_group" "wordpress_prod_sg" {
     protocol    = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    # accept connections from the openvpn security group
+    security_groups = [aws_security_group.openvpn_sg.id]
+  }
+  # TODO egress to security group for rds and efs
+
+}

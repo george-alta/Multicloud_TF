@@ -99,3 +99,4 @@ resource "aws_security_group" "alb_sg" {
     Name  = "ALB-SG"
     Owner = var.owner_name
   } 
+}

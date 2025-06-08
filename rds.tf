@@ -20,14 +20,16 @@ resource "aws_security_group" "wp_db_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    security_groups = [aws_security_group.wordpress_sg.id]
+    security_groups = [aws_security_group.ec2_dev_sg.id, aws_security_group.wordpress_prod_sg.id]
+    description = "Allow SQL traffic from EC2 instances"
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = [aws_security_group.wordpress_sg.id]
+    security_groups = [aws_security_group.ec2_dev_sg.id, aws_security_group.wordpress_prod_sg.id]
+    description = "Allow SQL traffic from EC2 instances"
   }
 
   tags = {

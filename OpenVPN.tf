@@ -1,5 +1,5 @@
 resource "aws_security_group" "openvpn_sg" {
-  name        = "openvpn-sg"
+  name        = "OPENVPN-SG"
   description = "Allow OpenVPN and SSH"
   vpc_id      = aws_vpc.wp_vpc.id
 

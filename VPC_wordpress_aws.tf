@@ -27,7 +27,7 @@ resource "aws_subnet" "public_a" {
   availability_zone       = var.aws_availability_zone_a
   map_public_ip_on_launch = true
   tags = {
-    LoadBalancersTeam = "Public_SubNet_a"
+    Owner = var.owner_name
     Name              = var.public_subnet_a_name
 
   }
@@ -39,7 +39,7 @@ resource "aws_subnet" "private_a" {
   cidr_block        = var.private_subnet_a_cidr
   availability_zone = var.aws_availability_zone_a
   tags = {
-    LoadBalancersTeam = "Private_SubNet_a"
+    Owner = var.owner_name
     Name              = var.private_subnet_a_name
   }
 }
